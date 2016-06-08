@@ -3,10 +3,10 @@ OBJECTS = PsqlReader.o CsvWriter.o
 
 LIBNAME = libbdtaunu_machine_learning_utils.so
 
-BOOST_ROOT = /usr/local/boost_1_59_0
+BOOST_ROOT = /usr/local/boost_1_56_0
 BOOST_LIBS = $(BOOST_ROOT)/stage/lib
 
-LIBPQ_ROOT = /usr/pgsql-9.4
+LIBPQ_ROOT = /usr/local/pgsql
 LIBPQ_INCS = $(LIBPQ_ROOT)/include
 LIBPQ_LIBS = $(LIBPQ_ROOT)/lib
 

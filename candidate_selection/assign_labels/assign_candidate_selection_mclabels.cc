@@ -11,7 +11,7 @@
 namespace po = boost::program_options;
 namespace pu = pgstring_utils;
 
-void extract_upsilon_candidate_mclabels(const po::variables_map &vm);
+void assign_candidate_selection_mclabels(const po::variables_map &vm);
 
 int main(int argc, char **argv) {
 
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 
     if (vm.count("help") || !vm.count("config_file")) {
       std::cout << std::endl;
-      std::cout << "Usage: ./extract_upsilon_candidate_mclabels ";
+      std::cout << "Usage: ./assign_candidate_selection_mclabels ";
       std::cout << "[options] config_fname" << std::endl;
       std::cout << visible << "\n";
       return 0;
@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
     notify(vm);
 
     // main routine
-    extract_upsilon_candidate_mclabels(vm);
+    assign_candidate_selection_mclabels(vm);
 
   } catch(std::exception& e) {
 
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
 }
 
 
-void extract_upsilon_candidate_mclabels(const po::variables_map &vm) {
+void assign_candidate_selection_mclabels(const po::variables_map &vm) {
 
   // open database connection and populate fields
   std::string dbname = vm["dbname"].as<std::string>();
