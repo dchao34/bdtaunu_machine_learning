@@ -1,1 +1,1 @@
-SELECT MAX(weight) FROM event_weights_sigmc;
+SELECT MAX(weight), SUM(weight) FROM event_weights_sigmc;

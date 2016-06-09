@@ -9,22 +9,25 @@ find_max_weight_script = 'find_max_weight.sql'
 count_data_script = 'count_data.sql'
 copy_data_script = 'copy_data.sql'
 drop_views_script = 'drop_views.sql'
-float_matcher = re.compile('[-+]?(\d*[.])?\d+')
 
-def get_max_weight(psql_command):
 
-    match = None
+def get_weight_info(psql_command):
+
+    match_max, match_sum = None, None
+    float_matcher = re.compile('([-+]?(\d*[.])?\d+)')
 
     temp = tempfile.TemporaryFile(mode='w+b')
     sp.check_call(psql_command, stdout=temp)
     temp.seek(0)
     for line in temp:
-        match = float_matcher.search(line.strip())
-        if match:
+        tok = line.strip().split('|')
+        match_max = float_matcher.search(tok[0].strip())
+        match_sum = float_matcher.search(tok[1].strip())
+        if match_max:
             break
     temp.close()
 
-    return float(match.group(0))
+    return float(match_max.group(0)), float(match_sum.group(0))
 
 def get_row_count(psql_command):
 
@@ -67,13 +70,16 @@ if __name__ == '__main__':
     start = time.time()
     print '+ Checking consistency of the undersampling scale...'
     sys.stdout.flush()
-    max_weight = get_max_weight(['psql', '-q', '-d', args.dbname, '-f', find_max_weight_script])
+    max_weight, sum_weight = get_weight_info(
+        ['psql', '-q', '-t', '-F', '|',
+         '-d', args.dbname,
+         '-f', find_max_weight_script])
 
-    max_subsample_p = max_weight * args.scale
-    print '  max weight * scale = {0}.'.format(max_subsample_p)
+    max_subsample_p = max_weight * args.scale / sum_weight
+    print '  max_weight * scale / sum_weight = {0}.'.format(max_subsample_p)
     if max_subsample_p > 1.0:
         raise RuntimeError(
-            'max weight * scale must be <= 1'.format(max_subsample_p)
+            'must have max_weight * scale / sum_weight <= 1'.format(max_subsample_p)
         )
     end = time.time()
     print '  completed in {0} seconds. \n'.format(round(end-start, 2))
