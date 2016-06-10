@@ -100,22 +100,38 @@ def select_best_candidate(C_id, C_att):
     return np.array(E_id), np.array(E_att), np.array(E_meta)
 
 
+def print_results(E_id, E_att, E_meta):
+
+    # Overall characteristics
+    n_events, n_hot = E_id.shape[0], np.count_nonzero(E_meta[:,0] > 0)
+    print '  Number of events: {0}'.format(n_events)
+    print '  Number of events with a tm candidate: {0}'.format(n_hot)
+    print '  Ratio: {0}'.format(n_hot / float(n_events))
+    print
+
+    # Number of successful choices
+    n_success = np.count_nonzero(E_att[:,-1] > 0)
+    print '  Number of events with a tm candidate: {0}'.format(n_hot)
+    print '  Number of events with successful choices: {0}'.format(n_success)
+    print '  Ratio: {0}'.format(n_success / float(n_hot))
+    print
+
 if __name__ == '__main__':
 
-    print 'Loading pickled objects... '
+    print '+ Loading pickled objects... '
     imp = joblib.load('models/imputer.pkl')
     scaler = joblib.load('models/scaler.pkl')
     enc = joblib.load('models/encoder.pkl')
     rf = joblib.load('models/rf.pkl')
     print
 
-    print 'Importing test sample... '
+    print '+ Importing test sample... '
     adapter = LearningDataAdapter(for_learning=True)
     adapter.adapt_file('data/validate.csv')
     print
 
 
-    print 'Predicting test sample candidate scores... '
+    print '+ Predicting test sample candidate scores... '
     evaluator = ModelEvaluator(
         imputer=imp, scaler=scaler,
         encoder=enc, model=rf
@@ -123,47 +139,34 @@ if __name__ == '__main__':
     score = evaluator.predict_proba(adapter.X_num, adapter.X_cat)[:,1]
     print
 
-    print 'Selecting best candidate... '
+    print '+ Assessing model results... '
+    print
+
+    print '  Selecting best candidate... '
     C_id = adapter.record_id
     C_att = np.hstack((
         adapter.X_num, adapter.X_cat,
-        #adapter.w.reshape(adapter.w.shape[0], 1),
         score.reshape(score.shape[0], 1),
         adapter.y.reshape(adapter.y.shape[0], 1),
     ))
     E_id, E_att, E_meta = select_best_candidate(C_id, C_att)
     print
 
-    print 'Results...\n'
+    print_results(E_id, E_att, E_meta)
 
-    # Overall characteristics
-    n_events, n_hot = E_id.shape[0], np.count_nonzero(E_meta[:,0] > 0)
-    print 'Number of events: {0}'.format(n_events)
-    print 'Number of events with a tm candidate: {0}'.format(n_hot)
-    print 'Ratio: {0}'.format(n_hot / float(n_events))
+    print '+ Assessing min Eextra results... '
     print
 
-    # Number of successful choices
-    n_success = np.count_nonzero(E_att[:,-1] > 0)
-    print 'Number of events with a tm candidate: {0}'.format(n_hot)
-    print 'Number of events with successful choices: {0}'.format(n_success)
-    print 'Ratio: {0}'.format(n_success / float(n_hot))
+    score = -1 * adapter.X_num[:,1]
+
+    print '  Selecting best candidate... '
+    C_id = adapter.record_id
+    C_att = np.hstack((
+        adapter.X_num, adapter.X_cat,
+        score.reshape(score.shape[0], 1),
+        adapter.y.reshape(adapter.y.shape[0], 1),
+    ))
+    E_id, E_att, E_meta = select_best_candidate(C_id, C_att)
     print
 
-    #print 'Writing selected candidates to file... \n'
-    #header_list = (reader.header_list[0:2] +
-    #               reader.header_list[3:31] +
-    #               reader.header_list[2:3] +
-    #               [ 'cand_score' ] +
-    #               reader.header_list[31:] +
-    #               [ 'hot', 'n_cand', 'n_opt', 'opt_mad_dev'])
-    #header_line = ','.join(header_list) + '\n'
-    #f = open('rf_selected_candidates.csv', 'w')
-    #f.write(header_line)
-    #for i in range(E_id.shape[0]):
-    #    id_cols = map(str, map(int, E_id[i].tolist()))
-    #    att_cols = map(str, E_att[i].tolist())
-    #    meta_cols = map(str, E_meta[i].tolist())
-    #    line = ','.join(id_cols + att_cols + meta_cols) + '\n'
-    #    f.write(line)
-    #f.close()
+    print_results(E_id, E_att, E_meta)
