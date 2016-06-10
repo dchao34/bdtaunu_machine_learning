@@ -7,8 +7,16 @@ import time
 create_views_script = 'create_views.sql'
 find_max_weight_script = 'find_max_weight.sql'
 count_data_script = 'count_data.sql'
-copy_data_script = 'copy_data.sql'
+copy_data_ml_script = 'copy_data_ml.sql'
+copy_data_explore_script = 'copy_data_explore.sql'
 drop_views_script = 'drop_views.sql'
+
+sample_map = {
+    'explore' : 1,
+    'train' : 2,
+    'validate' : 3,
+    'test' : 4
+}
 
 
 def get_weight_info(psql_command):
@@ -48,8 +56,9 @@ if __name__ == '__main__':
 
     import argparse
     parser = argparse.ArgumentParser(description='Obtain machine learning sample. ')
-    parser.add_argument('sample_type', type=int,
-                        help='type of machine learning sample to obtain. ')
+    parser.add_argument('sample_type', type=str,
+                        help='type of machine learning sample to obtain. One of '
+                             'explore, train, validate, or test. ')
     parser.add_argument('scale', type=float,
                         help='scale factor affecting subsampling. '
                         'higher means less subsampling. ')
@@ -89,7 +98,7 @@ if __name__ == '__main__':
         sp.check_call(
             ['psql', '-q', '-d', args.dbname,
              '-v', 'scale={0}'.format(args.scale),
-             '-v', 'sample_type={0}'.format(args.sample_type),
+             '-v', 'sample_type={0}'.format(sample_map[args.sample_type]),
              '-f', create_views_script],
             stdout=temp)
 
@@ -110,6 +119,10 @@ if __name__ == '__main__':
         start = time.time()
         print '+ Copying rows to file \'{0}\'... '.format(args.output_fname)
         sys.stdout.flush()
+
+        copy_data_script = copy_data_ml_script
+        if args.sample_type == 'explore':
+            copy_data_script = copy_data_explore_script
 
         with open(args.output_fname, 'w') as w:
             sp.check_call(
