@@ -1,6 +1,7 @@
 import sys
 import time
 import psycopg2
+import subprocess as sp
 import numpy as np
 import sklearn.preprocessing as preprocessing
 from sklearn.ensemble import RandomForestClassifier
@@ -10,10 +11,33 @@ from SqlDataLoader import SqlDataLoader
 from LearningDataAdapter import LearningDataAdapter
 from ModelEvaluator import ModelEvaluator
 
+def add_table_column(dbname, table_name):
+    alter_template = 'ALTER TABLE {0} ADD COLUMN cand_score real;'
+    alter_query = alter_template.format(table_name)
+    status = sp.check_call(['psql', '-q', '-d', dbname,
+                            '-c', alter_query])
+    return
+
+
 if __name__ == '__main__':
 
+    import argparse
+    parser = argparse.ArgumentParser(description='Score upsilon candidates. ')
+    parser.add_argument('--table_name', '-t', type=str, required=True,
+                        help='candidate table name. ')
+    parser.add_argument('--dbname', '-d', type=str, required=True,
+                        help='database to connect to. ')
+    args = parser.parse_args()
+
     print
-    print 'Loading models.'
+    print '+ Connecting to {0} to populate column in table {1}'.format(args.dbname, args.table_name)
+    print
+
+    print '  Adding new column to table.'
+    add_table_column(args.dbname, args.table_name)
+    print
+
+    print '  Loading models.'
     imp = joblib.load('models/imputer.pkl')
     scaler = joblib.load('models/scaler.pkl')
     enc = joblib.load('models/encoder.pkl')
@@ -22,11 +46,10 @@ if __name__ == '__main__':
     adapter = LearningDataAdapter(for_learning=False)
     print
 
-    # 347778957 rows in Candidate table.
-    print 'Predicting and updating.'
-    print 'Started on {0}'.format(time.ctime(time.time()))
-    with SqlDataLoader(database='testing',
-                       table_name='upsilon_candidates_sigmc',
+    print '  Predicting and updating.'
+    print '  Started on {0}'.format(time.ctime(time.time()))
+    with SqlDataLoader(database=args.dbname,
+                       table_name=args.table_name,
                        itersize=200000,
                        arraysize=200000,
                        rollback=False,
@@ -42,5 +65,5 @@ if __name__ == '__main__':
         sys.stdout.write('Done.\n')
 
         sql_loader.finish()
-        print 'Finished on {0}'.format(time.ctime(time.time()))
+        print '  Finished on {0}'.format(time.ctime(time.time()))
         print
