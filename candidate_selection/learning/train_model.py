@@ -48,8 +48,8 @@ if __name__ ==  '__main__':
     print 'Training model... '
     #rf = RandomForestClassifier(n_estimators=10)
     #rf = RandomForestClassifier(n_estimators=100)
-    rf = RandomForestClassifier(n_estimators=200)
-    #rf = RandomForestClassifier(n_estimators=1000)
+    #rf = RandomForestClassifier(n_estimators=200)
+    rf = RandomForestClassifier(n_estimators=1000)
     #rf.fit(X_trans, y, sample_weight=w)
     rf.fit(X_trans, y)
     joblib.dump(rf, 'models/rf.pkl')
