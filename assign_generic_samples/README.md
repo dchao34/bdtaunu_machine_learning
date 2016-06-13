@@ -13,6 +13,6 @@ The following is a mapping from the sample type to a unique integer key.
 
 Sample Proportions
 ---
-+ 2% of all generic monte carlo is assigned to each of `explore`, `train`, `validate`, and `test` samples. 
++ 10% of all generic monte carlo is assigned to machine learning in the ratios `explore` : `train` : `validate` : `test` = 2:1:1:1
 + The `data emulation` sample is obtained by weighted undersampling of all generic modes such that the obtained sample has, approximately, the correct proportion as well as the size of the real data. 
 + Data records that were not assigned to any of the previous samples are assigned to the `KDE sample`. 
