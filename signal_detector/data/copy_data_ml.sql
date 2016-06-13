@@ -1,6 +1,7 @@
 CREATE TEMPORARY VIEW M AS
 SELECT 
   eid, 
+  cidx,
   ntracks,
   r2all,
   mmiss2,
