@@ -10,7 +10,7 @@ SELECT * FROM
 
 CREATE VIEW temp_dstartau_detector_sample AS
 SELECT * FROM 
-  temp_dstartau_detector_meta
+  (temp_dstartau_detector_meta INNER JOIN candidate_optimized_events_scores_sigmc USING (eid))
   INNER JOIN
   candidate_optimized_events_sigmc
   USING (eid);
