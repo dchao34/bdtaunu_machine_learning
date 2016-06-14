@@ -46,9 +46,9 @@ if __name__ ==  '__main__':
     X_trans = np.hstack((X_num_trans, X_cat_trans))
 
     print 'Training model... '
-    rf = RandomForestClassifier(n_estimators=10)
+    #rf = RandomForestClassifier(n_estimators=10)
     #rf = RandomForestClassifier(n_estimators=100)
-    #rf = RandomForestClassifier(n_estimators=1000)
+    rf = RandomForestClassifier(n_estimators=1000)
     rf.fit(X_trans, y, sample_weight=w)
     joblib.dump(rf, 'models/rf.pkl')
     print
