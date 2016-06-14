@@ -26,6 +26,7 @@ SELECT
   sig_hmass,
   sig_vtxh,
   cand_score,
+  signal_score,
   tag_isbdstar,
   sig_isbdstar,
   tag_dmode,
@@ -35,7 +36,7 @@ SELECT
   tag_l_epid,
   tag_l_mupid,
   weight,
-  eventlabel
+  mode_label
 FROM temp_dstartau_detector_sample;
 
 \copy (SELECT * FROM M) TO STDOUT WITH CSV HEADER;
