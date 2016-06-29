@@ -68,5 +68,26 @@ if __name__ ==  '__main__':
 
 
 
+
+    print 'Gradient Boostint Decision Tree 10:'
+    print 'Predicting out of sample... '
+    rf = joblib.load("./models/gbdt10.pkl")
+    imp = joblib.load("./models/imputer.pkl")
+    scaler = joblib.load("./models/scaler.pkl")
+    enc = joblib.load("./models/encoder.pkl")
+
+    evaluator = ModelEvaluator(
+        imputer=imp, scaler=scaler,
+        encoder=enc, model=rf
+    )
+    y_pred = evaluator.predict(X_num, X_cat)
+
+    print 'plotting...'
+    prob1 = evaluator.predict_proba(X_num, X_cat)[:,1]
+    fpr,tpr,thresholds = roc_curve(y, prob1, sample_weight=w)
+    plt.plot(fpr,tpr,'b-',label='gbdt10')    
+
+
+
     plt.legend()
     plt.savefig("./test.png")
