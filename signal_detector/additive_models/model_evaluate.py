@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from LearningDataAdapter import LearningDataAdapter
 from ModelEvaluator import ModelEvaluator
 from sklearn.metrics import roc_curve
+import glob
 
 if __name__ ==  '__main__':
     
@@ -26,6 +27,29 @@ if __name__ ==  '__main__':
 
 
     # plot
+    print 'Plotting ROC curve...'
+    imp = joblib.load("./models/imputer.pkl")
+    scaler = joblib.load("./models/scaler.pkl")
+    enc = joblib.load("./models/encoder.pkl")
+    
+    model_list = glob.glob('./models/*.pkl')
+    for model in model_list:
+        rf = joblib.load('./models/'+model)
+        evaluator = ModelEvaluator(
+        imputer=imp, scaler=scaler,
+        encoder=enc, model=rf
+        )
+
+        y_pred = evaluator.predict(X_num, X_cat)
+        prob1 = evaluator.predict_proba(X_num, X_cat)[:,1]
+        fpr,tpr,thresholds = roc_curve(y, prob1, sample_weight=w)
+        plt.plot(fpr,tpr,'r-',label=model[:-4])
+
+    plt.legend()
+    plt.savefig("./roc.png")
+
+
+    """
     print 'Gradient Boosting Decision Tree 100:'
     print 'Predicting out of sample... '
     rf = joblib.load("./models/gbdt100.pkl")
@@ -87,7 +111,4 @@ if __name__ ==  '__main__':
     fpr,tpr,thresholds = roc_curve(y, prob1, sample_weight=w)
     plt.plot(fpr,tpr,'r-',label='gbdt10')    
 
-
-
-    plt.legend()
-    plt.savefig("./test.png")
+"""
