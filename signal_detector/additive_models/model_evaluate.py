@@ -24,7 +24,10 @@ if __name__ ==  '__main__':
     w, y = adapter.w, adapter.y
     print
 
-    print 'Predicting in sample... '
+
+    # plot
+    print 'Gradient Boosting Decision Tree 100:'
+    print 'Predicting out of sample... '
     rf = joblib.load("./models/gbdt100.pkl")
     imp = joblib.load("./models/imputer.pkl")
     scaler = joblib.load("./models/scaler.pkl")
@@ -40,6 +43,30 @@ if __name__ ==  '__main__':
     prob1 = evaluator.predict_proba(X_num, X_cat)[:,1]
     fpr,tpr,thresholds = roc_curve(y, prob1, sample_weight=w)
     plt.plot(fpr,tpr,'r-',label='gbdt100')
+    print
+
+
+
+
+    print 'Logistic Regression:'
+    print 'Predicting out of sample... '
+    rf = joblib.load("./models/logistic.pkl")
+    imp = joblib.load("./models/imputer.pkl")
+    scaler = joblib.load("./models/scaler.pkl")
+    enc = joblib.load("./models/encoder.pkl")
+
+    evaluator = ModelEvaluator(
+        imputer=imp, scaler=scaler,
+        encoder=enc, model=rf
+    )
+    y_pred = evaluator.predict(X_num, X_cat)
+
+    print 'plotting...'
+    prob1 = evaluator.predict_proba(X_num, X_cat)[:,1]
+    fpr,tpr,thresholds = roc_curve(y, prob1, sample_weight=w)
+    plt.plot(fpr,tpr,'r-',label='logistic')
+
+
 
     plt.legend()
     plt.savefig("./test.png")
