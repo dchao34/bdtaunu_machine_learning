@@ -5,17 +5,19 @@ from sklearn.ensemble import GradientBoostingClassifier
 from scipy.spatial.distance import hamming
 from sklearn.externals import joblib
 import csv
+import matplotlib.pyplot as plt
 from LearningDataAdapter import LearningDataAdapter
 from ModelEvaluator import ModelEvaluator
 from sklearn.metrics import roc_curve
 
 if __name__ ==  '__main__':
+    
 	
-	plt.switch_backend('agg')
+    plt.switch_backend('agg')
 
 
-	# obtain valid data
-	print 'Importing test sample... '
+    # obtain valid data
+    print 'Importing test sample... '
     adapter = LearningDataAdapter(for_learning=True)
     adapter.adapt_file('data/validate.csv')
     X_num, X_cat = adapter.X_num, adapter.X_cat
@@ -23,32 +25,32 @@ if __name__ ==  '__main__':
     print
 
 
-	rf = joblib.load("./models/GDBTc80.pkl")
-	print 'Predicting in sample... '
-	evaluator = ModelEvaluator(
-	    imputer=imp, scaler=scaler,
-	    encoder=enc, model=rf
-	)
-	y_pred = evaluator.predict(X_num, X_cat)
-	prob1 = rf.predict_proba(x_valid)[:,1]
-	fpr,tpr,thresholds = roc_curve(pred_y[0].values, prob1, sample_weight=pred_w[0].values)
-	plt.plot(fpr,tpr,'r-',label='GDBTc80')
+    rf = joblib.load("./models/GDBTc80.pkl")
+    print 'Predicting in sample... '
+    evaluator = ModelEvaluator(
+        imputer=imp, scaler=scaler,
+        encoder=enc, model=rf
+    )
+    y_pred = evaluator.predict(X_num, X_cat)
+    prob1 = rf.predict_proba(x_valid)[:,1]
+    fpr,tpr,thresholds = roc_curve(pred_y[0].values, prob1, sample_weight=pred_w[0].values)
+    plt.plot(fpr,tpr,'r-',label='GDBTc80')
 	
 
-	rf = joblib.load("./models/logistic.pkl")
-	print 'Predicting in sample... '
-	evaluator = ModelEvaluator(
-	    imputer=imp, scaler=scaler,
-	    encoder=enc, model=rf
-	)
-	y_pred = evaluator.predict(X_num, X_cat)
-	prob1 = rf.predict_proba(x_valid)[:,1]
-	fpr,tpr,thresholds = roc_curve(pred_y[0].values, prob1, sample_weight=pred_w[0].values)
-	plt.plot(fpr,tpr,'r-',label='logistic')
+    rf = joblib.load("./models/logistic.pkl")
+    print 'Predicting in sample... '
+    evaluator = ModelEvaluator(
+        imputer=imp, scaler=scaler,
+        encoder=enc, model=rf
+    )
+    y_pred = evaluator.predict(X_num, X_cat)
+    prob1 = rf.predict_proba(x_valid)[:,1]
+    fpr,tpr,thresholds = roc_curve(pred_y[0].values, prob1, sample_weight=pred_w[0].values)
+    plt.plot(fpr,tpr,'r-',label='logistic')
 
 
-	plt.legend()
-	plt.savefig("./test.png")
+    plt.legend()
+    plt.savefig("./test.png")
 
 
 """
