@@ -31,6 +31,7 @@ if __name__ ==  '__main__':
     # and learning curve for each model.
 
     print 'Plotting ROC curve...'
+    plt.figure(1)
     imp = joblib.load("./models/imputer.pkl")
     scaler = joblib.load("./models/scaler.pkl")
     enc = joblib.load("./models/encoder.pkl")
@@ -54,10 +55,11 @@ if __name__ ==  '__main__':
 
 
     print 'Plotting probability distribution...'
+    plt.figure(2,figsize=(15,16))
     number_of_models = len(model_list)
     count = 0
     for model in model_list:
-    if model not in ['./models/encoder.pkl','./models/scaler.pkl','./models/imputer.pkl']:
+        if model not in ['./models/encoder.pkl','./models/scaler.pkl','./models/imputer.pkl']:
             count = count + 1
             rf = joblib.load(model)
             evaluator = ModelEvaluator(
@@ -71,7 +73,7 @@ if __name__ ==  '__main__':
             plt.subplot(len(model_list)/2, 2, count)
             plt.hist(background,color='b',bins=100,normed='true',histtype='step')
             plt.hist(signal,color='r',bins=100,normed='true',histtype='step')
-            plt.title(model)
+            plt.title(model[9:-4])
     plt.savefig("./density_plot.png")
 
 
