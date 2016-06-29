@@ -28,7 +28,7 @@ if __name__ ==  '__main__':
     rf = joblib.load("./models/gbdt100.pkl")
     imp = joblib.load("./models/imputer.pkl")
     scaler = joblib.load("./models/scaler.pkl")
-    encoder = joblib.load("./models/encoder.pkl")
+    enc = joblib.load("./models/encoder.pkl")
 
     evaluator = ModelEvaluator(
         imputer=imp, scaler=scaler,
@@ -37,8 +37,8 @@ if __name__ ==  '__main__':
     y_pred = evaluator.predict(X_num, X_cat)
 
     print 'plotting...'
-    prob1 = rf.predict_proba(x_valid)[:,1]
-    fpr,tpr,thresholds = roc_curve(pred_y[0].values, prob1, sample_weight=pred_w[0].values)
+    prob1 = evaluator.predict_proba(X_num, X_cat)[:,1]
+    fpr,tpr,thresholds = roc_curve(y, prob1, sample_weight=w)
     plt.plot(fpr,tpr,'r-',label='gbdt100')
 
     plt.legend()
