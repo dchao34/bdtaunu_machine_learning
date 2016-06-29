@@ -34,16 +34,17 @@ if __name__ ==  '__main__':
     
     model_list = glob.glob('./models/*.pkl')
     for model in model_list:
-        rf = joblib.load('./models/'+model)
-        evaluator = ModelEvaluator(
-        imputer=imp, scaler=scaler,
-        encoder=enc, model=rf
-        )
+	if model not in ['./models/encoder.pkl','./models/scaler.pkl','./models/imputer.pkl']:
+            rf = joblib.load(model)
+            evaluator = ModelEvaluator(
+            imputer=imp, scaler=scaler,
+            encoder=enc, model=rf
+            )
 
-        y_pred = evaluator.predict(X_num, X_cat)
-        prob1 = evaluator.predict_proba(X_num, X_cat)[:,1]
-        fpr,tpr,thresholds = roc_curve(y, prob1, sample_weight=w)
-        plt.plot(fpr,tpr,'r-',label=model[:-4])
+            y_pred = evaluator.predict(X_num, X_cat)
+            prob1 = evaluator.predict_proba(X_num, X_cat)[:,1]
+            fpr,tpr,thresholds = roc_curve(y, prob1, sample_weight=w)
+            plt.plot(fpr,tpr,label=model[9:-4])
 
     plt.legend()
     plt.savefig("./roc.png")
