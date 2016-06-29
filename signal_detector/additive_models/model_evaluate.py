@@ -85,7 +85,7 @@ if __name__ ==  '__main__':
     print 'plotting...'
     prob1 = evaluator.predict_proba(X_num, X_cat)[:,1]
     fpr,tpr,thresholds = roc_curve(y, prob1, sample_weight=w)
-    plt.plot(fpr,tpr,'b-',label='gbdt10')    
+    plt.plot(fpr,tpr,'r-',label='gbdt10')    
 
 
 
