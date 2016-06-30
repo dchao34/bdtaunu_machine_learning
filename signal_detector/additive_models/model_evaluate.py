@@ -78,8 +78,8 @@ if __name__ ==  '__main__':
             signal = prob1[pred_y==1]
             background = prob1[pred_y==0]
             plt.subplot(len(model_list)/2, 2, count)
-            plt.hist(background,color='b',bins=100,normed='true',weights=pred_w,histtype='step')
-            plt.hist(signal,color='r',bins=100,normed='true',weights=pred_w,histtype='step')
+            plt.hist(background,color='b',bins=100,normed='true',histtype='step')
+            plt.hist(signal,color='r',bins=100,normed='true',histtype='step')
             plt.title(model[9:-4])
     plt.savefig("./density_plot.png")
     print
@@ -87,6 +87,7 @@ if __name__ ==  '__main__':
 
 
     print 'Plotting learning curve......'
+    plt.figure(3)
     print 'Importing training data...'
     adapter.adapt_file('data/train.csv')
     X_num, X_cat = adapter.X_num, adapter.X_cat
@@ -95,19 +96,21 @@ if __name__ ==  '__main__':
     encoder=enc)
     train_w, train_y = adapter.w, adapter.y
     train_x = evaluator.preprocess(X_num,X_cat)
+    rf = joblib.load('./models/logistic.pkl')
     print rf
     lcr = learning_curve(train_x,train_y,train_w,pred_x,pred_y,pred_w,rf)
     train_size, train_list, test_list = lcr.learning_curve()
-    plt.plot(train_size,train_list)
-    plt.plot(train_size,test_list)
+    plt.plot(train_size,train_list,label='train')
+    plt.plot(train_size,test_list,label='test')
+    plt.legend()
     plt.savefig("./learning_curve.png")
 
 
 
 
+"""
 
-
-    """
+ 
     print 'Gradient Boosting Decision Tree 100:'
     print 'Predicting out of sample... '
     rf = joblib.load("./models/gbdt100.pkl")
