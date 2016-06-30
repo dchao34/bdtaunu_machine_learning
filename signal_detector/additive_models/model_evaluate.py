@@ -96,13 +96,22 @@ if __name__ ==  '__main__':
     encoder=enc)
     train_w, train_y = adapter.w, adapter.y
     train_x = evaluator.preprocess(X_num,X_cat)
-    rf = joblib.load('./models/logistic.pkl')
-    print rf
-    lcr = learning_curve(train_x,train_y,train_w,pred_x,pred_y,pred_w,rf)
-    train_size, train_list, test_list = lcr.learning_curve()
-    plt.plot(train_size,train_list,label='train')
-    plt.plot(train_size,test_list,label='test')
-    plt.legend()
+
+    print 'Calculating learning curves...'
+    number_of_models = len(model_list)
+    count = 0
+    for model in model_list:
+        if model not in ['./models/encoder.pkl','./models/scaler.pkl','./models/imputer.pkl']:
+            count = count + 1
+            plt.subplot(len(model_list), 1, count)
+            rf = joblib.load(model)
+            print rf
+            lcr = learning_curve(train_x,train_y,train_w,pred_x,pred_y,pred_w,rf)
+            train_size, train_list, test_list = lcr.learning_curve()
+            plt.plot(train_size,train_list,label='train')
+            plt.plot(train_size,test_list,label='test')
+            plt.legend()
+    
     plt.savefig("./learning_curve.png")
 
 
