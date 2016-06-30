@@ -87,7 +87,7 @@ if __name__ ==  '__main__':
 
 
     print 'Plotting learning curve......'
-    plt.figure(3,figsize=(15,16))
+    plt.figure(3,figsize=(15,40))
     print 'Importing training data...'
     adapter.adapt_file('data/train.csv')
     X_num, X_cat = adapter.X_num, adapter.X_cat
