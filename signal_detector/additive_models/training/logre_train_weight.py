@@ -54,6 +54,6 @@ if __name__ ==  '__main__':
     # training
 
     print 'Training logistic regression...'
-    rf = LogisticRegression()
+    rf = LogisticRegression(class_weight='auto')
     rf.fit(X_trans, y)
-    joblib.dump(rf, '../models/logistic.pkl')
+    joblib.dump(rf, '../models/logisticweight.pkl')

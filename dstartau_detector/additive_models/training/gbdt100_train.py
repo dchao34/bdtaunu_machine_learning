@@ -4,7 +4,6 @@ from sklearn.decomposition import PCA
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.linear_model import LogisticRegression
 from scipy.spatial.distance import hamming
 from sklearn.externals import joblib
 from LearningDataAdapter import LearningDataAdapter
@@ -53,7 +52,7 @@ if __name__ ==  '__main__':
 
     # training
 
-    print 'Training logistic regression...'
-    rf = LogisticRegression()
-    rf.fit(X_trans, y)
-    joblib.dump(rf, '../models/logistic.pkl')
+    #x_train = train_x.values
+    rf = GradientBoostingClassifier(n_estimators=10)
+    rf.fit(X_trans, y, w)
+    joblib.dump(rf, '../models/gbdt10.pkl')

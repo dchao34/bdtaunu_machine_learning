@@ -45,7 +45,6 @@ if __name__ ==  '__main__':
     model_list = glob.glob('./models/*.pkl')
     for model in model_list:
 	if model not in ['./models/encoder.pkl','./models/scaler.pkl','./models/imputer.pkl']:
-            print model
             rf = joblib.load(model)
             evaluator = ModelEvaluator(
             imputer=imp, scaler=scaler,
