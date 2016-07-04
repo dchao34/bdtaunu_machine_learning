@@ -40,14 +40,21 @@ if __name__ == '__main__':
     print
 
     print '  Loading models.'
+
     logre_evaluator = LoadModelEvaluator(
         'models/logre_imputer.pkl', 'models/logre_scaler.pkl',
         'models/logre_encoder.pkl', 'models/logre.pkl')
+
+    gbdt300_evaluator = LoadModelEvaluator(
+        'models/gbdt300_imputer.pkl', 'models/gbdt300_scaler.pkl',
+        'models/gbdt300_encoder.pkl', 'models/gbdt300.pkl')
+
     adapter = LearningDataAdapter(for_learning=False)
+
     print
 
     f = open(args.output_fname, 'w')
-    f.write('eid,logre_signal_score\n')
+    f.write('eid,logre_signal_score,gbdt300\n')
 
     print '  Predicting and updating.'
     print '  Started on {0}'.format(time.ctime(time.time()))
@@ -65,10 +72,12 @@ if __name__ == '__main__':
             adapter.adapt_records(sql_loader.curr_records)
 
             logre_score = logre_evaluator.predict_proba(adapter.X_num, adapter.X_cat)
+            gbdt300_score = gbdt300_evaluator.predict_proba(adapter.X_num, adapter.X_cat)
 
             for i in range(adapter.record_id.shape[0]):
                 row = [ adapter.record_id[i,0] ]
                 row += [ logre_score[i, 1] ]
+                row += [ gbdt300_score[i, 1] ]
                 f.write(','.join(map(str, row)) + '\n')
 
             sql_loader.fetch_next()
