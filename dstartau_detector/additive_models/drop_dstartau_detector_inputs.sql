@@ -1,0 +1,3 @@
+DROP VIEW temp_dstartau_detector_inputs_generic;
+DROP VIEW temp_dstartau_detector_inputs_data;
+DROP VIEW temp_dstartau_detector_inputs_sigmc;
