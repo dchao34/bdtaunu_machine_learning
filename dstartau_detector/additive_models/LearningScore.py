@@ -15,7 +15,7 @@ class learning_curve:
 				 pred_y,
 				 pred_w,
 				 model,
-				 train_sizes=[0.001,0.01,0.1,1]):
+				 train_sizes=[0.001,0.01,0.05,0.1,0.4,0.7,1]):
 		self.tran_X = tran_X
 		self.tran_y = tran_y
 		self.tran_w = tran_w
