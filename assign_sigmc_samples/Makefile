@@ -1,13 +1,13 @@
 BINARIES = assign_sigmc_samples
 OBJECTS = 
 
-BDTAUNU_MACHINE_LEARNING_ROOT = /Users/dchao/workspace/bdtaunu_machine_learning
+BDTAUNU_MACHINE_LEARNING_ROOT = /home/dchao/workspace/bdtaunu_machine_learning
 UTILS_ROOT = $(BDTAUNU_MACHINE_LEARNING_ROOT)/utils
 
-BOOST_ROOT = /usr/local/boost_1_56_0
+BOOST_ROOT = /usr/local/boost_1_59_0
 BOOST_LIBS = $(BOOST_ROOT)/stage/lib
 
-LIBPQ_ROOT = /usr/local/pgsql
+LIBPQ_ROOT = /usr/pgsql-9.4
 LIBPQ_INCS = $(LIBPQ_ROOT)/include
 LIBPQ_LIBS = $(LIBPQ_ROOT)/lib
 
